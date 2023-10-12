@@ -9,6 +9,8 @@ jobs:
   release:
     name: Build, package and release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     defaults:
       run:
         working-directory: ./install-entando
