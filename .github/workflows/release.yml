@@ -29,12 +29,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'npm'
-
       - name: Install pkg
         run: npm install -g pkg
 
