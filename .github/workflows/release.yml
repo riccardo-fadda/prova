@@ -8,6 +8,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        arch:
+          - x64
+          - arm64
+        node-version:
+          - 16
+        os:
+          - linux
+          - macos
+          - win
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -25,32 +38,6 @@ jobs:
           npm run build
         working-directory: ./install-entando
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: built-project
-          path: ./install-entando
-
-  package:
-    needs: build
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch:
-          - x64
-          - arm64
-        node-version:
-          - 16
-        os:
-          - linux
-          - macos
-          - win
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: built-project
-
       - name: Package into node binary
         uses: lando/pkg-action@v2
         with:
@@ -58,15 +45,9 @@ jobs:
           arch: ${{ matrix.arch }}
           config: ./install-entando/package.json
           node-version: ${{ matrix.node-version }}
-          options: -C
+          options: --compress Brotli --no-bytecode --public-packages "*" --public
           os: ${{ matrix.os }}
-          
-  release:
-    needs: package
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
