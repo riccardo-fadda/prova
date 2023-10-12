@@ -1,9 +1,9 @@
 name: Release Workflow
 
 on:
-  create:
-    branches:
-      - 'release/*'
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   release:
@@ -24,9 +24,10 @@ jobs:
           cache-dependency-path: './install-entando/package.json'
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm run build
+        run: npm install
+
+      - name: Build
+        run: npm run build
 
       - name: Install pkg
         run: npm install -g pkg
@@ -40,7 +41,7 @@ jobs:
           tag: v2.1.5-procursus2
 
       - name: Package into node binaries
-        run: pkg . --compress Brotli --target node16-linux-x64,node16-linux-arm64,node16-win-x64,node16-win-arm64,node16-macos-x64,node16-macos-arm64
+        run: pkg . --compress Brotli --target node16-linux-x64,node16-linux-arm64,node16-win-x64,node16-win-arm64,node16-macos-x64,node16-macos-arm64 --no-bytecode --public-packages "*" --public
 
       - name: Release
         uses: softprops/action-gh-release@v1
