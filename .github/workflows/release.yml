@@ -28,9 +28,6 @@ jobs:
   package:
     needs: build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./install-entando
     steps:
       - name: Install pkg
         run: npm install -g pkg
