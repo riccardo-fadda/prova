@@ -1,0 +1,59 @@
+name: Release Workflow
+
+on:
+  create:
+    branches:
+      - 'release/*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm run build
+        working-directory: ./install-entando
+
+  package:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - x64
+          - arm64
+        node-version:
+          - 16
+        os:
+          - linux
+          - macos
+          - win
+    steps:
+      - name: Package into node binary
+        uses: lando/pkg-action@v2
+        with:
+          entrypoint: ./install-entando/bin/run
+          arch: ${{ matrix.arch }}
+          config: ./install-entando/package.json
+          node-version: ${{ matrix.node-version }}
+          options: -C
+          os: ${{ matrix.os }}
+          
+  release:
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./install-entando/install-entando-*-*
