@@ -1,6 +1,6 @@
 {
   "name": "install-entando",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Install Entando CLI",
   "author": "Riccardo Fadda @riccardo-fadda",
   "bin": {
