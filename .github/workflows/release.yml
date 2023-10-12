@@ -50,7 +50,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: built-project
-          
+
       - name: Package into node binary
         uses: lando/pkg-action@v2
         with:
@@ -64,6 +64,8 @@ jobs:
   release:
     needs: package
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Release
         uses: softprops/action-gh-release@v1
